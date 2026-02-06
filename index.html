@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Cozy Business Life</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #game {
+    background: #fff;
+    width: 420px;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    text-align: center;
+    animation: pop 0.5s ease;
+  }
+
+  @keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  h1 {
+    margin-top: 0;
+    color: #ff7a00;
+  }
+
+  #stats {
+    background: #fff3d6;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  #story {
+    margin: 15px 0;
+    font-size: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 20px;
+    font-size: 15px;
+    cursor: pointer;
+    background: #ffd36a;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #ffb703;
+    transform: scale(1.03);
+  }
+</style>
+</head>
+
+<body>
+
+<div id="game">
+  <h1>☕ Cozy Office Life</h1>
+
+  <div id="stats">
+    💰 Bani: <span id="money">500</span>$ |
+    😌 Stres: <span id="stress">20</span>% |
+    📅 Ziua: <span id="day">1</span>
+  </div>
+
+  <p id="story"></p>
+  <div id="choices"></div>
+</div>
+
+<script>
+let money = 500;
+let stress = 20;
+let day = 1;
+
+const story = document.getElementById("story");
+const choices = document.getElementById("choices");
+
+function updateStats() {
+  document.getElementById("money").innerText = money;
+  document.getElementById("stress").innerText = stress;
+  document.getElementById("day").innerText = day;
+}
+
+function setChoices(options) {
+  choices.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.innerText = opt.text;
+    btn.onclick = opt.action;
+    choices.appendChild(btn);
+  });
+}
+
+function startDay() {
+  story.innerText = "Ești la birou. Cafeaua e caldă ☕ Ce faci?";
+  setChoices([
+    { text: "💻 Muncești concentrat", action: workHard },
+    { text: "📞 Vorbești cu șeful", action: talkBoss },
+    { text: "☕ Iei pauză de cafea", action: coffee },
+    { text: "🎨 Lucrezi la side project", action: sideProject }
+  ]);
+}
+
+function workHard() {
+  day++;
+  money += 120;
+  stress += 15;
+  story.innerText = "Ai muncit mult. Ai câștigat bani, dar ești obosit.";
+  next();
+}
+
+function talkBoss() {
+  day++;
+  if (Math.random() > 0.5) {
+    money += 200;
+    story.innerText = "Șeful te apreciază! Primești un bonus 🎉";
+  } else {
+    stress += 20;
+    story.innerText = "Șeful e nervos azi… awkward 😬";
+  }
+  next();
+}
+
+function coffee() {
+  day++;
+  stress -= 15;
+  if (stress < 0) stress = 0;
+  story.innerText = "Cafeaua te relaxează. Te simți mai bine ☕";
+  next();
+}
+
+function sideProject() {
+  day++;
+  stress += 5;
+  if (Math.random() > 0.7) {
+    money += 400;
+    story.innerText = "Side project-ul prinde! Câștigi extra 💡";
+  } else {
+    story.innerText = "Lucrezi încet, dar înveți ceva nou.";
+  }
+  next();
+}
+
+function next() {
+  updateStats();
+
+  if (stress >= 100) {
+    burnout();
+    return;
+  }
+
+  if (money >= 3000) {
+    win();
+    return;
+  }
+
+  setChoices([
+    { text: "➡️ Continuă ziua următoare", action: startDay }
+  ]);
+}
+
+function burnout() {
+  story.innerText = "😵 Burnout! Ai muncit prea mult. Joc terminat.";
+  setChoices([{ text: "🔄 Reîncepe", action: restart }]);
+}
+
+function win() {
+  story.innerText = "🌟 Ai ajuns manager respectat. Cozy success!";
+  setChoices([{ text: "🔄 Joacă din nou", action: restart }]);
+}
+
+function restart() {
+  money = 500;
+  stress = 20;
+  day = 1;
+  updateStats();
+  startDay();
+}
+
+updateStats();
+startDay();
+</script>
+
+</body>
+</html>
